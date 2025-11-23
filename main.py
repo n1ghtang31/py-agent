@@ -1,5 +1,6 @@
-import os 
+import os
 import sys
+
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
@@ -18,36 +19,42 @@ if len(sys.argv) < 2:
 prompt = sys.argv[1]
 
 messages = [
-    types.Content(role='user', parts=[types.Part(text=prompt)]),
+    types.Content(role="user", parts=[types.Part(text=prompt)]),
 ]
 
 
 response = client.models.generate_content(
-    model='gemini-2.0-flash-001', contents=messages
+    model="gemini-2.0-flash-001", contents=messages
 )
+
 
 def set_verbose(args):
     args = args[1:]
     verbose = False
     for arg in args:
         if arg == "--verbose":
-           verbose = True
+            verbose = True
     return verbose
+
 
 def generate_response(args):
     prompt = args[1]
     verbose = set_verbose(args[1:])
 
-    if verbose == True:
+    if verbose:
         print(f"User prompt: {prompt}")
-        print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+        print(
+            f"Response tokens: {response.usage_metadata.candidates_token_count or 'N/A'}"
+        )
+        print(f"Prompt tokens: {response.usage_metadata.prompt_token_count or 'N/A'}")
         print(f"Response: {response.text}")
     else:
         print(response.text)
-    
+
+
 def main():
     generate_response(sys.argv)
+
 
 if __name__ == "__main__":
     main()
